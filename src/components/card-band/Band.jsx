@@ -7,13 +7,16 @@ import {
   useRopeJoint,
   useSphericalJoint,
 } from "@react-three/rapier";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { MeshLineGeometry, MeshLineMaterial } from "meshline";
-import { Image, RenderTexture, useGLTF } from "@react-three/drei";
-import dp from '../../assets/dp.png'
+import { Image, RenderTexture, useGLTF, useTexture } from "@react-three/drei";
+import dp from "../../assets/dp.png";
+import cardGlb from "../../assets/card.glb";
+import darkBandImg from "../../assets/band.png";
+import lightBandImg from "../../assets/light-band.png";
 extend({ MeshLineGeometry, MeshLineMaterial });
 
-export const Band = () => {
+export const Band = ({ maxSpeed = 50, minSpeed = 50 }) => {
   const band = useRef();
   const fixed = useRef();
   const card = useRef();
@@ -30,9 +33,9 @@ export const Band = () => {
     angularDamping: 2,
     linearDamping: 2,
   };
-  const { nodes, materials } = useGLTF(
-    "https://assets.vercel.com/image/upload/contentful/image/e5382hct74si/5huRVDzcoDwnbgrKUo1Lzs/53b6dd7d6b4ffcdbd338fa60265949e1/tag.glb"
-  );
+  const { nodes, materials } = useGLTF(cardGlb);
+
+  const texture = useTexture(darkBandImg);
 
   //canvas size
   const { width, height } = useThree((state) => state.size);
@@ -41,6 +44,10 @@ export const Band = () => {
     ang = new THREE.Vector3(),
     rot = new THREE.Vector3(),
     dir = new THREE.Vector3();
+  const targetRot = useMemo(
+    () => new THREE.Vector3(-0.05, -Math.PI / 12, 0),
+    []
+  );
   // A Catmull-Rom curve
   const [curve] = useState(
     () =>
@@ -55,13 +62,20 @@ export const Band = () => {
   const [dragged, drag] = useState(false);
   const [hovered, hover] = useState(false);
 
-  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 1]);
-  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 1]);
+  useRopeJoint(fixed, j1, [[0, 0, 0], [0, 0, 0], 0.6]);
+  useRopeJoint(j1, j2, [[0, 0, 0], [0, 0, 0], 0.6]);
+  useRopeJoint(j2, j3, [[0, 0, 0], [0, 0, 0], 0.6]);
   useSphericalJoint(j3, card, [
     [0, 0, 0],
     [0, 1.45, 0],
   ]);
+
+  useEffect(() => {
+    if (hovered) {
+      document.body.style.cursor = dragged ? "grabbing" : "grab";
+      return () => void (document.body.style.cursor = "auto");
+    }
+  }, [hovered, dragged]);
 
   useFrame((state, delta) => {
     if (dragged) {
@@ -76,6 +90,20 @@ export const Band = () => {
       });
     }
     if (fixed.current) {
+      [j1, j2].forEach((ref) => {
+        if (!ref.current.lerped)
+          ref.current.lerped = new THREE.Vector3().copy(
+            ref.current.translation
+          );
+        const clampedDist = Math.max(
+          0.1,
+          Math.min(1, ref.current.lerped.distanceTo(ref.current.translation()))
+        );
+        ref.current.lerped.lerp(
+          ref.current.translation(),
+          delta * (minSpeed + clampedDist * (maxSpeed - minSpeed))
+        );
+      });
       // Calculate catmul curve
       curve.points[0].copy(j3.current.translation());
       curve.points[1].copy(j2.current.translation());
@@ -83,27 +111,38 @@ export const Band = () => {
       curve.points[3].copy(fixed.current.translation());
       band.current.geometry.setPoints(curve.getPoints(32));
       // Tilt it back towards the screen
+
+      // const align = 0; // how strongly to pull toward targetRot
+      // card.current.setAngvel({
+      //   x: ang.x + (targetRot.x - rot.x) * align,
+      //   y: ang.y + (targetRot.y - rot.y) * align,
+      //   z: ang.z,
+      // });
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
       card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
     }
   });
 
+  curve.curveType = "chordal";
+  texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+
   return (
     <>
       <group position={[0, 4, 0]}>
         <RigidBody ref={fixed} {...segmentProps} type="fixed" />
-        <RigidBody position={[0.5, 0, 0]} ref={j1} {...segmentProps}>
+        <RigidBody position={[0.3, 0, 0]} ref={j1} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1, 0, 0]} ref={j2} {...segmentProps}>
+        <RigidBody position={[0.6, 0, 0]} ref={j2} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[1.5, 0, 0]} ref={j3} {...segmentProps}>
+        <RigidBody position={[0.9, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
         <RigidBody
-          position={[2, 0, 0]}
+          position={[1.2, 0, 0]}
+          rotation={[-0.05, -Math.PI / 12, 0]}
           ref={card}
           {...segmentProps}
           type={dragged ? "kinematicPosition" : "dynamic"}
@@ -127,28 +166,14 @@ export const Band = () => {
             )}
           >
             <mesh geometry={nodes.card.geometry}>
-              {/* <meshPhysicalMaterial
-                // map={materials.base.map}
+              <meshPhysicalMaterial
+                map={materials.base.map}
                 map-anisotropy={16}
                 clearcoat={1}
                 clearcoatRoughness={0.15}
                 roughness={0.3}
                 metalness={0.5}
-              /> */}
-
-              <meshPhysicalMaterial
-                clearcoat={1}
-                clearcoatRoughness={0.15}
-                iridescence={1}
-                iridescenceIOR={1}
-                iridescenceThicknessRange={[0, 2400]}
-                metalness={0.5}
-                roughness={0.3}
-              >
-                <RenderTexture attach="map" height={2000} width={2000}>
-                  <Image url={dp} scale={[1,1,1]}/>
-                </RenderTexture>
-              </meshPhysicalMaterial>
+              />
             </mesh>
             <mesh
               geometry={nodes.clip.geometry}
@@ -162,8 +187,10 @@ export const Band = () => {
       <mesh ref={band}>
         <meshLineGeometry />
         <meshLineMaterial
-          transparent
-          opacity={0.25}
+          // opacity={0.25}
+          useMap
+          map={texture}
+          repeat={[-2, 1]}
           color="white"
           depthTest={false}
           resolution={[width, height]}
