@@ -114,8 +114,8 @@ export default function SkillsScroll() {
   const scrollSkillsReverse = [...scrollSkills].reverse();
 
   return (
-    <div className="mt-16 overflow-hidden transition-colors duration-10">
-      <div className="w-full max-w-7xl">
+    <div className="mt-12 overflow-hidden transition-colors duration-10">
+      <div className="w-full py-4 max-w-7xl">
         {/* Title */}
 
         {/* First Row - Left Scroll */}
