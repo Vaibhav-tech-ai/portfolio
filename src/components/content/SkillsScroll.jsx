@@ -4,20 +4,20 @@ export default function SkillsScroll() {
   // Skills with actual tech stack logos from CDN
   const skills = [
     {
-      name: "Linux",
-      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg",
-      color: "from-gray-700/20 to-gray-900/30",
-    },
-    {
-      name: "Git",
-      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
-      color: "from-orange-500/20 to-red-600/30",
-    },
-    {
-      name: "Figma",
-      logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
-      color: "from-purple-500/20 to-pink-600/30",
-    },
+        name: "Linux",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg",
+        color: "from-gray-700/20 to-gray-900/30",
+      },
+      {
+        name: "Git",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg",
+        color: "from-orange-500/20 to-red-600/30",
+      },
+      {
+        name: "Figma",
+        logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+        color: "from-purple-500/20 to-pink-600/30",
+      },
     {
       name: "Next.js",
       logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg",
@@ -105,6 +105,8 @@ export default function SkillsScroll() {
       logo: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
       color: "from-blue-600/20 to-indigo-700/30",
     },
+    
+   
   ];
 
   // Duplicate skills for seamless infinite scroll (two copies back-to-back)
@@ -112,12 +114,12 @@ export default function SkillsScroll() {
   const scrollSkillsReverse = [...scrollSkills].reverse();
 
   return (
-    <div className="mt-142 overflow-hidden transition-colors duration-10">
+    <div className="mt-12 overflow-hidden transition-colors duration-10">
       <div className="w-full max-w-7xl">
         {/* Title */}
 
         {/* First Row - Left Scroll */}
-        <div className="relative mb-4   pt-2 overflow-hidden fade-edges">
+        <div className="relative mb-4 pt-2 overflow-hidden fade-edges">
           <div className="flex gap-4 scroll-container w-max">
             {scrollSkills.map((skill, index) => (
               <div
@@ -141,7 +143,7 @@ export default function SkillsScroll() {
         </div>
 
         {/* Second Row - Right Scroll */}
-        <div className="relative  pt-2 overflow-hidden fade-edges">
+        <div className="relative pt-2 overflow-hidden fade-edges">
           <div className="flex gap-4 scroll-container-reverse w-max">
             {scrollSkillsReverse.map((skill, index) => (
               <div
