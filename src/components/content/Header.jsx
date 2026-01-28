@@ -34,7 +34,7 @@ export const Header = ({ setIsDarkMode, isDarkMode }) => {
           pauseDuration={3000}
           showCursor={true}
           cursorCharacter="_"
-          className="text-3xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 sm:text-5xl md:text-6xl leading-tight"
+          className="text-4xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 sm:text-5xl md:text-6xl leading-tight"
         />
         {/* <span className="text-5xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50 sm:text-6xl">
           {text.split("").map((char, index) => (
