@@ -36,7 +36,7 @@ export const Experiences = () => {
       <div className="flex flex-col gap-6">
         {experiences.map((experience) => (
           <div className="flex justify-between items-center">
-            <div className="flex gap-5 items-center">
+            <div className="flex gap-1 items-center">
               <div className="flex h-12 w-12 items-center justify-center">
                 <img
                   alt="logo"
