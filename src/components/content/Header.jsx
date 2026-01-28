@@ -55,7 +55,7 @@ export const Header = ({ setIsDarkMode, isDarkMode }) => {
 
         <button
           onClick={() => setIsDarkMode((prev) => !prev)}
-          className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border border-zinc-200 bg-zinc-50 text-sm text-zinc-700 cursor-pointer transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-500 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
+          className="flex min-w-10 h-10 w-10 cursor-pointer items-center justify-center rounded-full border border border-zinc-200 bg-zinc-50 text-sm text-zinc-700 cursor-pointer transition hover:bg-zinc-100 hover:text-zinc-900 dark:border-zinc-500 dark:bg-zinc-950 dark:text-zinc-300 dark:hover:bg-zinc-900 dark:hover:text-zinc-50"
         >
           {!isDarkMode ? <Moon color="#111" /> : <SunMedium color="#fafafa" />}
         </button>

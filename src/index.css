@@ -19,7 +19,8 @@ body {
   /* background-color: #111; */
 }
 .page{
-  overflow: hidden;
+  /* Prevent accidental horizontal scrollbars (3D canvas / transforms, etc.) */
+  overflow-x: hidden;
 }
 .text-type {
   display: inline-block;
@@ -41,5 +42,112 @@ body {
   margin-left: auto;
   margin-right: auto;
   padding: 64px 24px;
-  overflow: hidden;
+  /* Let the outer .page control scrolling */
+  overflow: visible;
+}
+
+        
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Move left by half the content width; because we render two copies,
+       the pattern lines up perfectly when the animation loops */
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.2), 0 0 40px rgba(59, 130, 246, 0.1);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.3), 0 0 60px rgba(59, 130, 246, 0.15);
+  }
+}
+
+@keyframes glow-light {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.15), 0 0 40px rgba(59, 130, 246, 0.08);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(59, 130, 246, 0.25), 0 0 60px rgba(59, 130, 246, 0.12);
+  }
+}
+
+.scroll-container {
+  animation: scroll-left 60s linear infinite;
+}
+
+.scroll-container-reverse {
+  animation: scroll-right 60s linear infinite;
+}
+
+.skill-pill {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.skill-pill:hover {
+  transform: translateY(-5px) scale(1.05);
+  filter: brightness(1.2);
+}
+
+.fade-edges {
+  position: relative;
+}
+
+.fade-edges::before,
+.fade-edges::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 200px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.fade-edges::before {
+  left: 0;
+  background: linear-gradient(to right, rgb(249 250 251) 0%, transparent 100%);
+}
+
+.fade-edges::after {
+  right: 0;
+  background: linear-gradient(to left, rgb(249 250 251) 0%, transparent 100%);
+}
+
+.dark .fade-edges::before {
+  background: linear-gradient(to right, rgb(10 10 10) 0%, transparent 100%);
+}
+
+.dark .fade-edges::after {
+  background: linear-gradient(to left, rgb(10 10 10) 0%, transparent 100%);
+}
+
+.title-glow {
+  animation: glow-light 3s ease-in-out infinite;
+}
+
+.dark .title-glow {
+  animation: glow 3s ease-in-out infinite;
 }

@@ -4,6 +4,7 @@ import viteLogo from "/vite.svg";
 import { CardComp } from "./components/card-band/CardComp";
 import { Header } from "./components/content/Header";
 import { Experiences } from "./components/content/Experiences";
+import SkillsScroll from "./components/content/SkillsScroll";
 
 function App() {
   const [isDarkMode, setIsDarkMode] = useState(
@@ -24,14 +25,14 @@ function App() {
   }, [isDarkMode]);
 
   return (
-    <div className={`page h-screen bg-[#f5f5f5] dark:bg-[#09090b]`}>
+    <div className="page relative h-screen overflow-y-auto overflow-x-hidden bg-[#f5f5f5] dark:bg-[#09090b]">
       <div className="main-page flex flex-col gap-10">
         <Header setIsDarkMode={setIsDarkMode} isDarkMode={isDarkMode} />
         <Experiences />
-        <div className="absolute top-0 left-60 right-0 h-full overflow-hidden z-50 pointer-events-none hidden md:block">
-          <div className="absolute w-full h-full pointer-events-none">
-            <CardComp />
-          </div>
+        <SkillsScroll />
+        {/* 3D card, participates in page scroll and stays to the right */}
+        <div className="absolute top-0 left-60 right-0 h-full z-30 hidden md:block">
+          <CardComp />
         </div>
       </div>
     </div>
